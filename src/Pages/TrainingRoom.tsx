@@ -158,7 +158,7 @@ const TrainingRoom = () => {
           showDelete && setShowDelete(false);
         }}
         activeOpacity={1}>
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps="handled">
           <ModalView />
           <Modal visible={modalVisible}>
             <ModalInput setModal={setModalVisible} />

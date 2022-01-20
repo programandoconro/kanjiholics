@@ -6,7 +6,7 @@ const AddButton = (Props: {onPress: any}) => {
   return (
     <View style={styles.screen}>
       <TouchableOpacity style={styles.roundButton} onPress={Props.onPress}>
-        <Text style={{color: 'white'}}>+</Text>
+        <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
     </View>
   );
@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: COLORS.orange,
     alignSelf: 'flex-end',
+  },
+  buttonText: {
+    color: 'white',
   },
 });
 

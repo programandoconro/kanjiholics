@@ -6,7 +6,7 @@ If you want to delete a group, press the name of the group for a few seconds.
 
 You can have as many decks as you want!!.
 
-頑張って下さ！
+頑張って下さい！
   `;
 
 export const instructionsTraining = `Create a new flashcard and add it to the group. You can have as many as you want.
@@ -17,4 +17,4 @@ Click the next/show button to start to train. The kanjis will show in random ord
 
 You can also delete a kanji pressing it for a few seconds`;
 
-export const about = 'https://gitlab.com/programandoconro/kanjiholic';
+export const about = 'github.com/programandoconro/kanjiholics';

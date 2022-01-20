@@ -44,7 +44,9 @@ const ModalInput = (Props: {setModal: (val: boolean) => void}) => {
         },
       );
       Props.setModal(false);
-    } else Alert.alert('Kanji, hiragana and meaning cannot be empty');
+    } else {
+      Alert.alert('Kanji, hiragana and meaning cannot be empty');
+    }
   };
   return (
     <ScrollContainer>
@@ -73,12 +75,7 @@ const ModalInput = (Props: {setModal: (val: boolean) => void}) => {
         <View style={styles.addButton}>
           <AddButton onPress={handleAddKanji} />
         </View>
-        <View
-          style={{
-            alignContent: 'center',
-            alignItems: 'center',
-            bottom: 0,
-          }}>
+        <View style={styles.closeButton}>
           <Button
             title="Close"
             onPress={() => {
@@ -99,5 +96,11 @@ const styles = StyleSheet.create({
   addButton: {
     alignSelf: 'flex-end',
   },
+  closeButton: {
+    alignContent: 'center',
+    alignItems: 'center',
+    bottom: 0,
+  },
 });
+
 export default ModalInput;

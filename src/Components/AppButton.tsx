@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, ScrollView} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {COLORS, FONTS} from '../Utils/constants';
 
@@ -7,9 +7,11 @@ const AppButton = (Props: {title: string; onPress: () => void}) => {
   const {title, onPress} = Props;
 
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <TouchableOpacity style={styles.button} onPress={onPress}>
+        <Text style={styles.text}>{title}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 

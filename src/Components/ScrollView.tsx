@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 import {COLORS} from '../Utils/constants';
 
@@ -7,7 +7,9 @@ const ScrollContainer = (Props: {
 }) => {
   return (
     <View style={styles.main}>
-      <ScrollView>{Props.children}</ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        {Props.children}
+      </ScrollView>
     </View>
   );
 };
