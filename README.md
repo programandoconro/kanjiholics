@@ -3,6 +3,8 @@
 
 Android App to group, practice and master your favorite Kanjis.
 
+## Available for Android in: https://play.google.com/store/apps/details?id=com.kanjiholics
+
 ## Features: 
 
 * Firebase Authentication for multiple users.
