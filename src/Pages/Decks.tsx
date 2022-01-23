@@ -65,7 +65,7 @@ const Decks = ({navigation}: any) => {
     };
     editDeleteDialog(
       editDeck,
-      'You can edit or delete this deck',
+      `Do you want to edit or delete ${name} deck?`,
       confirmDelete,
     );
   };

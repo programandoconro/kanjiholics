@@ -5,20 +5,27 @@ export const confirmDialog = (
   message: string,
   onNoFuntion?: () => void,
 ) => {
-  return Alert.alert('Really?', message, [
-    {
-      text: 'Yes',
-      onPress: () => {
-        onYesFunction();
+  return Alert.alert(
+    'Really?',
+    message,
+    [
+      {
+        text: 'Yes',
+        onPress: () => {
+          onYesFunction();
+        },
       },
-    },
-    {
-      text: 'No',
-      onPress: () => {
-        onNoFuntion && onNoFuntion();
+      {
+        text: 'No',
+        onPress: () => {
+          onNoFuntion && onNoFuntion();
+        },
       },
+    ],
+    {
+      cancelable: true,
     },
-  ]);
+  );
 };
 
 export const editDeleteDialog = (
@@ -26,22 +33,29 @@ export const editDeleteDialog = (
   message: string,
   onDeleteFuntion: () => void,
 ) => {
-  return Alert.alert('Really?', message, [
-    {
-      text: 'Edit',
-      onPress: () => {
-        onEditFunction();
+  return Alert.alert(
+    'Really?',
+    message,
+    [
+      {
+        text: 'Edit',
+        onPress: () => {
+          onEditFunction();
+        },
       },
-    },
-    {
-      text: 'Delete',
-      onPress: () => {
-        onDeleteFuntion();
+      {
+        text: 'Delete',
+        onPress: () => {
+          onDeleteFuntion();
+        },
       },
-    },
+      {
+        text: 'Cancel',
+        onPress: () => {},
+      },
+    ],
     {
-      text: 'Cancel',
-      onPress: () => {},
+      cancelable: true,
     },
-  ]);
+  );
 };
