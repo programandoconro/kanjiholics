@@ -15,7 +15,7 @@ import AddButton from '../Components/AddButton';
 import UserContext from '../Utils/UserContext';
 import {COLORS} from '../Utils/constants';
 import ScrollContainer from '../Components/ScrollView';
-import confirmDialog from '../Components/confirmDialog';
+import {confirmDialog} from '../Components/confirmDialog';
 
 const TrainingRoom = () => {
   const [kanji, setKanji] = useState<object>({});

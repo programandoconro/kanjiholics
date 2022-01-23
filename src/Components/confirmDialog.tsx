@@ -1,6 +1,6 @@
 import {Alert} from 'react-native';
 
-const confirmDialog = (
+export const confirmDialog = (
   onYesFunction: () => void,
   message: string,
   onNoFuntion?: () => void,
@@ -21,4 +21,27 @@ const confirmDialog = (
   ]);
 };
 
-export default confirmDialog;
+export const editDeleteDialog = (
+  onEditFunction: () => void,
+  message: string,
+  onDeleteFuntion: () => void,
+) => {
+  return Alert.alert('Really?', message, [
+    {
+      text: 'Edit',
+      onPress: () => {
+        onEditFunction();
+      },
+    },
+    {
+      text: 'Delete',
+      onPress: () => {
+        onDeleteFuntion();
+      },
+    },
+    {
+      text: 'Cancel',
+      onPress: () => {},
+    },
+  ]);
+};

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useContext, useEffect} from 'react';
-import {Text, View, StyleSheet, Button} from 'react-native';
+import {Text, View, StyleSheet, Button, Alert} from 'react-native';
 import {
   mergeLocal,
   getLocalItem,
@@ -10,10 +10,10 @@ import {
 import AddButton from '../Components/AddButton';
 import Input from '../Components/Input';
 import ScrollContainer from '../Components/ScrollView';
-import confirmDialog from '../Components/confirmDialog';
 import {COLORS} from '../Utils/constants';
 import UserContext from '../Utils/UserContext';
 import {TextInput} from 'react-native-gesture-handler';
+import {confirmDialog, editDeleteDialog} from '../Components/confirmDialog';
 
 const Decks = ({navigation}: any) => {
   const [deck, setDeck] = useState<string>('');
@@ -44,33 +44,43 @@ const Decks = ({navigation}: any) => {
     user && getLocalItem('DECKS' + '/' + user.uid, setDecks);
   }, [user]);
 
-  const handleDeleteDeck = async (deckCode: string, deckName: string) => {
-    const deleteDeck = async () => {
-      await deleteNestedDeck('DECKS' + '/' + user.uid, deckCode);
-      await getLocalItem('DECKS' + '/' + user.uid, setDecks);
-    };
-    confirmDialog(deleteDeck, `Do you want to delete ${deckName} deck?`);
-  };
   const [inputArray, setInputArray] = useState<boolean[]>([false]);
   const handleEditDeck = async (
     deckCode: string,
-    deckName: string,
     key: number,
+    name: string,
   ) => {
     const editDeck = async () => {
       const newInputs = JSON.parse(JSON.stringify(inputArray));
       newInputs[key] = true;
       setInputArray(newInputs);
     };
-    confirmDialog(editDeck, `Do you want to edit ${deckName} deck?`);
+    const deleteDeck = async () => {
+      await deleteNestedDeck('DECKS' + '/' + user.uid, deckCode);
+      await getLocalItem('DECKS' + '/' + user.uid, setDecks);
+    };
+
+    const confirmDelete = () => {
+      confirmDialog(deleteDeck, `Do you really want to delete ${name} deck?`);
+    };
+    editDeleteDialog(
+      editDeck,
+      'You can edit or delete this deck',
+      confirmDelete,
+    );
   };
 
   const [newDeckName, setNewDeckName] = useState('');
 
   const onSetNewDeckName = async (deckCode: string) => {
-    setInputArray([false]);
-    await editNestedDeck('DECKS' + '/' + user.uid, deckCode, newDeckName);
-    await getLocalItem('DECKS' + '/' + user.uid, setDecks);
+    if (newDeckName.length > 0) {
+      setInputArray([false]);
+      await editNestedDeck('DECKS' + '/' + user.uid, deckCode, newDeckName);
+      await getLocalItem('DECKS' + '/' + user.uid, setDecks);
+      setNewDeckName('');
+    } else {
+      Alert.alert('Cannot be empty');
+    }
   };
 
   const ShowDecks = () => {
@@ -82,9 +92,25 @@ const Decks = ({navigation}: any) => {
             <View key={d} style={styles.decks}>
               {inputArray[key] ? (
                 <View>
-                  <TextInput onChangeText={e => setNewDeckName(e)} />
-
-                  <Button title="set" onPress={() => onSetNewDeckName(d)} />
+                  <TextInput
+                    onChangeText={e => setNewDeckName(e)}
+                    placeholder={parsedDecks[d]}
+                    style={{backgroundColor: COLORS.grey}}
+                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-evenly',
+                    }}>
+                    <Button title="set" onPress={() => onSetNewDeckName(d)} />
+                    <Button
+                      title="cancel"
+                      onPress={() => {
+                        setInputArray([false]);
+                      }}
+                      color="red"
+                    />
+                  </View>
                 </View>
               ) : (
                 <Text
@@ -94,7 +120,7 @@ const Decks = ({navigation}: any) => {
                     setDocument(parsedDecks[d]);
                   }}
                   onLongPress={() => {
-                    handleEditDeck(d, parsedDecks[d], key);
+                    handleEditDeck(d, key, parsedDecks[d]);
                   }}>
                   {parsedDecks[d]}
                 </Text>
@@ -122,8 +148,6 @@ const Decks = ({navigation}: any) => {
           </View>
         </View>
         <View>{ShowDecks()}</View>
-
-        <View style={styles.logout}></View>
       </View>
     </ScrollContainer>
   );
@@ -131,9 +155,6 @@ const Decks = ({navigation}: any) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-  },
-  logout: {
-    alignSelf: 'flex-end',
   },
   add: {
     alignSelf: 'flex-end',
