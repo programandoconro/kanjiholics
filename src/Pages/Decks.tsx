@@ -72,12 +72,18 @@ const Decks = ({navigation}: any) => {
 
   const [newDeckName, setNewDeckName] = useState('');
 
-  const onSetNewDeckName = async (deckCode: string) => {
+  const onSetNewDeckName = async (deckCode: string, oldName: string) => {
     if (newDeckName.length > 0) {
       setInputArray([false]);
-      await editNestedDeck('DECKS' + '/' + user.uid, deckCode, newDeckName);
+      await editNestedDeck(
+        'DECKS' + '/' + user.uid,
+        deckCode,
+        newDeckName,
+        oldName,
+      );
       await getLocalItem('DECKS' + '/' + user.uid, setDecks);
       setNewDeckName('');
+      console.log(oldName);
     } else {
       Alert.alert('Cannot be empty');
     }
@@ -104,7 +110,7 @@ const Decks = ({navigation}: any) => {
                     }}>
                     <Button
                       title="set"
-                      onPress={() => onSetNewDeckName(d)}
+                      onPress={() => onSetNewDeckName(d, parsedDecks[d])}
                       color={COLORS.blue}
                     />
                     <Button
