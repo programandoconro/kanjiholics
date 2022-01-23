@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    color: 'white',
   },
   menu: {
     backgroundColor: COLORS.blue,
@@ -128,7 +127,7 @@ const styles = StyleSheet.create({
   },
   hamburguer: {
     color: 'white',
-    right: 10,
+    paddingEnd: 20,
   },
 });
 export default HamburguerMenu;

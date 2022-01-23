@@ -110,18 +110,19 @@ const Decks = ({navigation}: any) => {
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-evenly',
+                      margin: 5,
                     }}>
                     <Button
-                      title="set"
+                      title="change"
                       onPress={() => onSetNewDeckName(d, parsedDecks[d])}
-                      color={COLORS.blue}
+                      color={COLORS.orange}
                     />
                     <Button
                       title="cancel"
                       onPress={() => {
                         setInputArray([false]);
                       }}
-                      color={COLORS.blue}
+                      color={COLORS.grey}
                     />
                   </View>
                 </View>
