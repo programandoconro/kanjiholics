@@ -29,15 +29,18 @@ const Decks = ({navigation}: any) => {
   };
 
   const handleAddButton = () => {
-    deck.length > 0 && setDocument(deck);
-    deck.length > 0 &&
+    if (deck.length > 0) {
+      setDocument(deck);
       mergeLocal(
         'DECKS' + '/' + user.uid,
         JSON.stringify({[user.uid + deck]: deck}),
       );
-    navigation.navigate('TrainingRoom');
-    setDeck('');
-    getLocalItem('DECKS' + '/' + user.uid, setDecks);
+      navigation.navigate('TrainingRoom');
+      setDeck('');
+      getLocalItem('DECKS' + '/' + user.uid, setDecks);
+    } else {
+      Alert.alert('Please add a name for your group');
+    }
   };
 
   useEffect(() => {
@@ -61,11 +64,11 @@ const Decks = ({navigation}: any) => {
     };
 
     const confirmDelete = () => {
-      confirmDialog(deleteDeck, `Do you really want to delete ${name} deck?`);
+      confirmDialog(deleteDeck, `Do you really want to delete ${name} group?`);
     };
     editDeleteDialog(
       editDeck,
-      `Do you want to edit or delete ${name} deck?`,
+      `Do you want to edit or delete ${name} group?`,
       confirmDelete,
     );
   };
@@ -151,7 +154,7 @@ const Decks = ({navigation}: any) => {
           <Input
             value={deck}
             onChange={handleCreateDeck}
-            placeholder="New Deck"
+            placeholder="New Group"
           />
           <View style={styles.add}>
             <AddButton onPress={handleAddButton} />
@@ -172,7 +175,7 @@ const styles = StyleSheet.create({
   decks: {
     alignSelf: 'center',
     backgroundColor: COLORS.blue,
-    width: 250,
+    width: '75%',
     flex: 1,
     flexDirection: 'column',
     borderColor: COLORS.grey,
@@ -187,6 +190,8 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
+    marginBottom: 10,
+    marginTop: 10,
   },
 });
 
