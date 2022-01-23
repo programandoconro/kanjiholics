@@ -51,7 +51,7 @@ const Decks = ({navigation}: any) => {
     name: string,
   ) => {
     const editDeck = async () => {
-      const newInputs = JSON.parse(JSON.stringify(inputArray));
+      const newInputs = [...inputArray];
       newInputs[key] = true;
       setInputArray(newInputs);
     };
@@ -102,13 +102,17 @@ const Decks = ({navigation}: any) => {
                       flexDirection: 'row',
                       justifyContent: 'space-evenly',
                     }}>
-                    <Button title="set" onPress={() => onSetNewDeckName(d)} />
+                    <Button
+                      title="set"
+                      onPress={() => onSetNewDeckName(d)}
+                      color={COLORS.blue}
+                    />
                     <Button
                       title="cancel"
                       onPress={() => {
                         setInputArray([false]);
                       }}
-                      color="red"
+                      color={COLORS.blue}
                     />
                   </View>
                 </View>

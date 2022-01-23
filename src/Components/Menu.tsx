@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {Menu, MenuDivider, MenuItem} from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/Octicons';
-import confirmDialog from './confirmDialog';
+import {confirmDialog} from './confirmDialog';
 import {signOut} from '../Storage/firebase';
 import {COLORS} from '../Utils/constants';
 import {TouchableOpacity} from 'react-native-gesture-handler';
