@@ -22,6 +22,23 @@ export const deleteNestedDeck = async (item: string, target: string) => {
     });
 };
 
+export const editNestedDeck = async (
+  item: string,
+  target: string,
+  newKanji: string,
+) => {
+  const deck = await AsyncStorage.getItem(item);
+  await AsyncStorage.removeItem(item);
+  deck &&
+    Object.entries(JSON.parse(deck)).forEach(([key, value]) => {
+      if (key === target) {
+        mergeLocal(item, JSON.stringify({[key]: newKanji}));
+      } else if (value) {
+        mergeLocal(item, JSON.stringify({[key]: value}));
+      }
+    });
+};
+
 export const getLocalItem = async (key: string, setDecks: any) => {
   // await AsyncStorage.clear();
   const result = await AsyncStorage.getItem(key);

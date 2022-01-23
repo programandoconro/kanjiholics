@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useContext, useEffect} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, StyleSheet, Button} from 'react-native';
 import {
   mergeLocal,
   getLocalItem,
+  editNestedDeck,
   deleteNestedDeck,
 } from '../Storage/asyncStorage';
 import AddButton from '../Components/AddButton';
@@ -12,6 +13,7 @@ import ScrollContainer from '../Components/ScrollView';
 import confirmDialog from '../Components/confirmDialog';
 import {COLORS} from '../Utils/constants';
 import UserContext from '../Utils/UserContext';
+import {TextInput} from 'react-native-gesture-handler';
 
 const Decks = ({navigation}: any) => {
   const [deck, setDeck] = useState<string>('');
@@ -49,23 +51,54 @@ const Decks = ({navigation}: any) => {
     };
     confirmDialog(deleteDeck, `Do you want to delete ${deckName} deck?`);
   };
+  const [inputArray, setInputArray] = useState<boolean[]>([false]);
+  const handleEditDeck = async (
+    deckCode: string,
+    deckName: string,
+    key: number,
+  ) => {
+    const editDeck = async () => {
+      const newInputs = JSON.parse(JSON.stringify(inputArray));
+      newInputs[key] = true;
+      setInputArray(newInputs);
+    };
+    confirmDialog(editDeck, `Do you want to edit ${deckName} deck?`);
+  };
+
+  const [newDeckName, setNewDeckName] = useState('');
+
+  const onSetNewDeckName = async (deckCode: string) => {
+    setInputArray([false]);
+    await editNestedDeck('DECKS' + '/' + user.uid, deckCode, newDeckName);
+    await getLocalItem('DECKS' + '/' + user.uid, setDecks);
+  };
 
   const ShowDecks = () => {
     if (decks) {
       const parsedDecks = JSON.parse(decks);
-      return Object.keys(parsedDecks).map(d => {
+      return Object.keys(parsedDecks).map((d, key) => {
         if (parsedDecks[d]) {
           return (
             <View key={d} style={styles.decks}>
-              <Text
-                style={{fontSize: 40, color: 'white', textAlign: 'center'}}
-                onPress={() => {
-                  handleClickDeck();
-                  setDocument(parsedDecks[d]);
-                }}
-                onLongPress={() => handleDeleteDeck(d, parsedDecks[d])}>
-                {parsedDecks[d]}
-              </Text>
+              {inputArray[key] ? (
+                <View>
+                  <TextInput onChangeText={e => setNewDeckName(e)} />
+
+                  <Button title="set" onPress={() => onSetNewDeckName(d)} />
+                </View>
+              ) : (
+                <Text
+                  style={{fontSize: 40, color: 'white', textAlign: 'center'}}
+                  onPress={() => {
+                    handleClickDeck();
+                    setDocument(parsedDecks[d]);
+                  }}
+                  onLongPress={() => {
+                    handleEditDeck(d, parsedDecks[d], key);
+                  }}>
+                  {parsedDecks[d]}
+                </Text>
+              )}
             </View>
           );
         }
