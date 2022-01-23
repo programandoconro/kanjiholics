@@ -22,6 +22,40 @@ export const deleteNestedDeck = async (item: string, target: string) => {
     });
 };
 
+export const editNestedDeck = async (
+  item: string,
+  target: string,
+  newDeck: string,
+  oldDeck: string,
+) => {
+  const deck = await AsyncStorage.getItem(item);
+  await AsyncStorage.removeItem(item);
+  deck &&
+    Object.entries(JSON.parse(deck)).forEach(([key, value]) => {
+      if (key === target) {
+        mergeLocal(item, JSON.stringify({[key]: newDeck}));
+      } else if (value) {
+        mergeLocal(item, JSON.stringify({[key]: value}));
+      }
+    });
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const result = await AsyncStorage.multiGet(keys);
+    result.forEach(async value => {
+      if (!value[0].startsWith('DECKS')) {
+        const a = value[0].split('/');
+        if (a[1] === oldDeck) {
+          const newKey = value[0].replace(a[1] + '/', newDeck + '/');
+          saveToLocal(newKey, value[1]);
+          AsyncStorage.removeItem(value[0]);
+        }
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getLocalItem = async (key: string, setDecks: any) => {
   // await AsyncStorage.clear();
   const result = await AsyncStorage.getItem(key);
@@ -29,7 +63,7 @@ export const getLocalItem = async (key: string, setDecks: any) => {
 };
 
 export const getItemLocal = async (key: string) => {
-  //await AsyncStorage.clear();
+  // await AsyncStorage.clear();
   const result = await AsyncStorage.getItem(key);
   console.log(result);
 };

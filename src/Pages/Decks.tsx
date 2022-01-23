@@ -1,17 +1,19 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useContext, useEffect} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, StyleSheet, Button, Alert} from 'react-native';
 import {
   mergeLocal,
   getLocalItem,
+  editNestedDeck,
   deleteNestedDeck,
 } from '../Storage/asyncStorage';
 import AddButton from '../Components/AddButton';
 import Input from '../Components/Input';
 import ScrollContainer from '../Components/ScrollView';
-import confirmDialog from '../Components/confirmDialog';
 import {COLORS} from '../Utils/constants';
 import UserContext from '../Utils/UserContext';
+import {TextInput} from 'react-native-gesture-handler';
+import {confirmDialog, editDeleteDialog} from '../Components/confirmDialog';
 
 const Decks = ({navigation}: any) => {
   const [deck, setDeck] = useState<string>('');
@@ -27,45 +29,115 @@ const Decks = ({navigation}: any) => {
   };
 
   const handleAddButton = () => {
-    deck.length > 0 && setDocument(deck);
-    deck.length > 0 &&
+    if (deck.length > 0) {
+      setDocument(deck);
       mergeLocal(
         'DECKS' + '/' + user.uid,
         JSON.stringify({[user.uid + deck]: deck}),
       );
-    navigation.navigate('TrainingRoom');
-    setDeck('');
-    getLocalItem('DECKS' + '/' + user.uid, setDecks);
+      navigation.navigate('TrainingRoom');
+      setDeck('');
+      getLocalItem('DECKS' + '/' + user.uid, setDecks);
+    } else {
+      Alert.alert('Please add a name for your group');
+    }
   };
 
   useEffect(() => {
     user && getLocalItem('DECKS' + '/' + user.uid, setDecks);
   }, [user]);
 
-  const handleDeleteDeck = async (deckCode: string, deckName: string) => {
+  const [inputArray, setInputArray] = useState<boolean[]>([false]);
+  const handleEditDeck = async (
+    deckCode: string,
+    key: number,
+    name: string,
+  ) => {
+    const editDeck = async () => {
+      const newInputs = [...inputArray];
+      newInputs[key] = true;
+      setInputArray(newInputs);
+    };
     const deleteDeck = async () => {
       await deleteNestedDeck('DECKS' + '/' + user.uid, deckCode);
       await getLocalItem('DECKS' + '/' + user.uid, setDecks);
     };
-    confirmDialog(deleteDeck, `Do you want to delete ${deckName} deck?`);
+
+    const confirmDelete = () => {
+      confirmDialog(deleteDeck, `Do you really want to delete ${name} group?`);
+    };
+    editDeleteDialog(
+      editDeck,
+      `Do you want to edit or delete ${name} group?`,
+      confirmDelete,
+    );
+  };
+
+  const [newDeckName, setNewDeckName] = useState('');
+
+  const onSetNewDeckName = async (deckCode: string, oldName: string) => {
+    if (newDeckName.length > 0) {
+      setInputArray([false]);
+      await editNestedDeck(
+        'DECKS' + '/' + user.uid,
+        deckCode,
+        newDeckName,
+        oldName,
+      );
+      await getLocalItem('DECKS' + '/' + user.uid, setDecks);
+      setNewDeckName('');
+      console.log(oldName);
+    } else {
+      Alert.alert('Cannot be empty');
+    }
   };
 
   const ShowDecks = () => {
     if (decks) {
       const parsedDecks = JSON.parse(decks);
-      return Object.keys(parsedDecks).map(d => {
+      return Object.keys(parsedDecks).map((d, key) => {
         if (parsedDecks[d]) {
           return (
             <View key={d} style={styles.decks}>
-              <Text
-                style={{fontSize: 40, color: 'white', textAlign: 'center'}}
-                onPress={() => {
-                  handleClickDeck();
-                  setDocument(parsedDecks[d]);
-                }}
-                onLongPress={() => handleDeleteDeck(d, parsedDecks[d])}>
-                {parsedDecks[d]}
-              </Text>
+              {inputArray[key] ? (
+                <View>
+                  <TextInput
+                    onChangeText={e => setNewDeckName(e)}
+                    placeholder={parsedDecks[d]}
+                    style={{backgroundColor: COLORS.grey}}
+                  />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-evenly',
+                    }}>
+                    <Button
+                      title="set"
+                      onPress={() => onSetNewDeckName(d, parsedDecks[d])}
+                      color={COLORS.blue}
+                    />
+                    <Button
+                      title="cancel"
+                      onPress={() => {
+                        setInputArray([false]);
+                      }}
+                      color={COLORS.blue}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <Text
+                  style={{fontSize: 40, color: 'white', textAlign: 'center'}}
+                  onPress={() => {
+                    handleClickDeck();
+                    setDocument(parsedDecks[d]);
+                  }}
+                  onLongPress={() => {
+                    handleEditDeck(d, key, parsedDecks[d]);
+                  }}>
+                  {parsedDecks[d]}
+                </Text>
+              )}
             </View>
           );
         }
@@ -82,15 +154,13 @@ const Decks = ({navigation}: any) => {
           <Input
             value={deck}
             onChange={handleCreateDeck}
-            placeholder="New Deck"
+            placeholder="New Group"
           />
           <View style={styles.add}>
             <AddButton onPress={handleAddButton} />
           </View>
         </View>
         <View>{ShowDecks()}</View>
-
-        <View style={styles.logout}></View>
       </View>
     </ScrollContainer>
   );
@@ -99,16 +169,13 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
   },
-  logout: {
-    alignSelf: 'flex-end',
-  },
   add: {
     alignSelf: 'flex-end',
   },
   decks: {
     alignSelf: 'center',
     backgroundColor: COLORS.blue,
-    width: 250,
+    width: '75%',
     flex: 1,
     flexDirection: 'column',
     borderColor: COLORS.grey,
@@ -123,6 +190,8 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
+    marginBottom: 10,
+    marginTop: 10,
   },
 });
 
