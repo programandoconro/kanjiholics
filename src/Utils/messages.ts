@@ -2,7 +2,7 @@ export const instructionsDecks = `Create a new group of words and add it pressin
 
 Click on the name of the group to go the training room. 
 
-If you want to delete a group, press the name of the group for a few seconds.
+If you want to edit or delete a group, press the name of the group for a few seconds.
 
 You can have as many decks as you want!!.
 
